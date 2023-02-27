@@ -2,206 +2,149 @@
 <!-- saved from url=(0027)https://www.hertzbleed.com/ -->
 <html lang="en">
 	<head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <link rel="icon" type="image/png" href="images/1.png">
-    <title>Rolling PWN</title>
+    <title>Grand Theft Auto - A peek of BLE relay attack</title>
     <link href="./css/style.css" rel="stylesheet" type="text/css">
   </head>
 
   <body>
 
       <header id="top">
-        <h1 class="pMain">Rolling Pwn Attack</h1>
-		<br/>
-        <div class="logo"></div>
+        <h1 class="pMain">Grand Theft Auto <br/> A peek of BLE relay attack</h1>
+     <!--    <div class="logo"></div>-->
       </header>
 
-     <br/>
-	 <br/>
-
       <section>
-	  <br/>
+	  
 		<div class="quarter noBorderOnLeft">
-		<h2 id="research-paper"  class="pPress">INTRODUCTION</h2>
+		<h2 id="research-paper"  class="pPress">HOW IT BEGIN</h2>
         <p class="pfont">
-		 Modern vehicles are often equipped with a remote keyless entry system. These RKE systems allow unlocking or starting the vehicle remotely. The goal of our research was to evaluate the resistance of a modern-day RKE system. Our research disclosed a Rolling-PWN attack vulnerability affecting all Honda vehicles currently existing on the market (From the Year 2012 up to the Year 2022). This weakness allows anyone to permanently open the car door or even start the car engine from a long distance.
+		About 7 years ago, security researcher Stawomir Jasek released a tool called Gattacker. It aims to use as a Man-in-the-Middle and analysis tool for BLE devices. However, IOT Hacking was very popular at the time, but car hackers are still waiting for their moment. In 2022 MAY, an independent security researcher Martin Herfurt published a project called TEMPA, which presented several vulnerabilities he found on Tesla. One of his tricks to hack the Tesla PhoneKey was BLE Relay, and the tool he used was Gattacker.
+		 <br/></p>
+		
+		 <div class="footer-B1"> </div>
+		 <p class="pfont">
+		 This immediately attracted my attention; in Martin’s article, he mentioned by using software like gattacker, it is possible to relay the information between the PhoneKey and the Tesla vehicle on a protocol level. Furthermore, the advantage of the protocol-based relay attack is the distance between the victim and the vehicle is not limited by physical constraints. This is sounds very exciting because that means we are not only able to drive away the Tesla, but the victim can be in any part of the world, as long as there is Internet access. 
+		 <br/>However, it also brought up the questions like how reliable this method is. More importantly, does it work on other modern vehicles that also implement the Phonekey function?
 		 <br/>
-		 <br/>
-		The Rolling-PWN bug is a serious vulnerability. We found it in a vulnerable version of the rolling codes mechanism, which is implemented in huge amounts of Honda vehicles. A rolling code system in keyless entry systems is to prevent replay attack. After each keyfob button pressed the rolling codes synchronizing counter is increased. However, the vehicle receiver will accept a sliding window of codes, to avoid accidental key pressed by design. By sending the commands in a consecutive sequence to the Honda vehicles, it will be resynchronizing the counter. Once counter resynced, commands from the previous cycle of the counter worked again. Therefore, those commands can be used later to unlock the car at will.
+		 </p>
+		 <div class="footer-B2"></div>
+		 <p class="pfont">
+		 Before we jump on to messing with all the cars, let us first understand some background knowledge of the BLE relay attack. The Tesla Model 3 and Y implement a BLE-based passive entry system called PhoneKey. As the name suggests, Tesla owners can use an authorized mobile phone to unlock and control the vehicle within a proximity range. In addition, all the cryptographic challenge-response operations were conducted over BLE. But here is a catch, even the Tesla PhoneKey has implemented the challenge-response as authenticate mechanism. They did not enable the BLE link-layer pairing/encryption, it only use JustWorks mode instead, which make it the perfect target of Gattacker.
 		</p>
 		
 		
 		</div>
 		  <div class="quarter noBorderOnLeft">
-          <h2 id="research-paper"  class="pPress">QUESTIONS AND ANSWERS</h2>
-		  <div>
-		  <p class="ptitle"> 0: Please show me Rolling-PWN in action?<br/></p>
+          <h2 id="research-paper"  class="pPress">THE SUCCESS</h2>
           <p class="pfont">
-			We have successfully tested the 10 most popular models of Honda vehicles from the Year 2012 up to the Year 2022 from the attacker's perspective. Therefore, we strongly believe the vulnerability affects all Honda vehicles currently existing on the market.
-			<br/>
-			<br/>
-			&nbsp;&nbsp;· Honda Civic 2012<br/>
-			
-			&nbsp;&nbsp;· Honda X-RV 2018<br/>
-			
-			&nbsp;&nbsp;· Honda C-RV 2020<br/>
-
-			&nbsp;&nbsp;· Honda Accord 2020<br/>
-
-			&nbsp;&nbsp;· Honda Odyssey 2020<br/>
-			
-			&nbsp;&nbsp;· Honda Inspire 2021<br/>
-			
-			
-			&nbsp;&nbsp;· Honda Fit 2022<br/>
-
-			&nbsp;&nbsp;· Honda Civic 2022<br/>
-			
-			&nbsp;&nbsp;· Honda VE-1 2022<br/>
-
-			&nbsp;&nbsp;· Honda Breeze 2022<br/>
-			
-			&nbsp;&nbsp;· Honda Accord 2021(Verified by Rob Stumpf from <a href="https://www.thedrive.com/tech/i-tried-the-honda-keyfob-hack-on-my-own-car-it-totally-worked">thedrive</a>)<br/>
+		  For the first attempt, we have Gattacker running on two laptops; relay the Tesla Model 3 traffic through a local WIFI connection. Turns out Martin was right. The 7 years old, Gattacker still works as a charm.
 			<br/>
 
-			Please see the demo videos down below. Note that, even the keyfob pressed multiple times, we are still able to open the door repeatedly. Meaning the rolling code mechanism has been pwned.
+			<video width="570" height="320" controls="controls" class="pVideo">
+			  <source src="video/TESLA-BLE-2.mp4" type="video/mp4">
+			</video>
+			
+			<br/>
+			Then we tested it on Tesla Model Y. No surprise here, it open the car doors respectively.
+			<br/>
+			<div class="footer-B3"></div>
+			 <p class="pfont">
+			What about the long-distance relay attack? To achieve this goal, we have set up a publicly accessible VPN server. And running Gattacker on Raspberry PIs instead of the PCs.
+			<br/></p>
+			<div class="footer-B4"></div>
+			 <p class="pfont">
+			The result is quite amazing; we have not just relayed the traffic over a long distance but crossed the city. As shown in the demo, we have successfully opened the door for Tesla in a completely different place.
+			<br/></p>
+			<video width="570" height="320" controls="controls" class="pVideo">
+			  <source src="video/TESLA-VPN2.mp4" type="video/mp4">
+			</video>
+			 <p class="pfont">
+			
+			So, one question remains, does it work on other modern vehicles that also implement the Phonekey function? In recent years, the smart-car business is booming in China, and almost everyone like to have part in it. I have to say some of them are quite good cars. But when come to security, they still have room to improve. Below is one of the most popular smart car in China. We are easily connected to it with a BLE application, no pairing is required. This is a good, ok maybe a bad sign, depending on how you see it.
+			<br/></p>
+			<div class="footer-B5"></div>
+			<p class="pfont">
+			Once again, the Gattacker work very well. And notice that in the demo video, the attacker purposely keeps a distance from the victim, to emulate the real attack.
+			<br/></p>
+			
+			<video width="570" height="320" controls="controls" class="pVideo">
+			  <source src="video/car-2.mp4" type="video/mp4">
+			</video>
+			<br/>
+			 <p class="pfont">
+			So here is a trick, when we like to see if the vehicle is vulnerable to the BLE Relay attack, we can always use any BLE App to connect to it, if no pairing is needed, it may be a sign of a problem.
+			<br/></p>
+			<div class="footer-B6"></div>
+			<div class="footer-B7"></div>
+			<div class="footer-B8"></div>
+			<div class="footer-B9"></div>
 		  </p>
-			<video width="320" height="200" controls="controls" class="pVideo">
-			  <source src="video/Demo-Video-CRV.mp4" type="video/mp4">
-			</video>
-			<video width="320" height="200" controls="controls" class="pVideo">
-				<source src="video/Demo-Video-Accord.mp4" type="video/mp4">
-			</video>
-			<video width="320" height="200" controls>
-			  <source src="video/Demo-Video-Odyssey.mp4" type="video/mp4" class="pVideo">
-			</video>
-			<video width="320" height="200" controls>
-				<source src="video/Demo-Video-XRV.mp4" type="video/mp4" class="pVideo">
-			</video>
-			<video width="320" height="240" controls>
-				<source src="video/Demo-Video-Inspire.mp4" type="video/mp4">
-			</video>
+		  </div>
 		  
-		  </div>
-		  <div>
-		  <br/>
-		  <p class="ptitle"> 1: Why it is called the Rolling-PWN, not a Honda-PWN?<br/></p>
+		<div class="quarter noBorderOnLeft">
+          <h2 id="research-paper"  class="pPress">THE FAILURE</h2>
           <p class="pfont">
-			Because this bug may exist in other brands of vehicles too ;)
-		  </p>
-		  </div>
+		  Just like any science experiment, success was not always the case. During the test, we failed to perform the BLE Relay attack on some of the targets with Gattacker. One clear sign is these vendors have enabled the PIN codes requirement during the beginning of the pairing stage, which is out of the capability of Gattacker since Gattacker only works for the target do not implement the BLE link-layer pairing/encryption.
 		  <br/>
-		  <div>
-		  <p class="ptitle"> 2: Who found the Rolling-PWN Bug?<br/></p>
-          <p class="pfont">
-			A team of security Researchers Kevin2600 and Wesley Li from Star-V Lab independently discovered this bug.
-		  </p>
-		  </div>
-		  <br/>
-		  <div>
-		  <p class="ptitle"> 3: Am I affected by the bug?<br/></p>
-          <p class="pfont">
-			As long as the vulnerable version of Honda vehicles is in use, it can be abused.
-		  </p>
-		  </div>
-		  <br/>
-		  <div>
-		  <p class="ptitle"> 4: Is there an assigned CVE for Rolling-PWN? <br/></p>
-          <p class="pfont" color="red">
-			CVE-2021-46145 is the official reference to this  bug. CVE is the Standard for Information Security Vulnerability Names maintained by MITRE.
-		  </p>
-		  </div>
-		  <br/>
-		  <div>
-		  <p class="ptitle"> 5: Can I detect if someone has exploited this against me? <br/></p>
-          <p class="pfont">
-			Probably not. The exploitation does not leave any traces in traditional log files. But considering the ease of exploitation and attacks leaving no trace, this threat should take seriously.		  
-		  </p>
-		  </div>
-		  <br/>
-		  <div>
-		  <p class="ptitle"> 6: Is this a Honda vehicle only Bug? <br/></p>
-          <p class="pfont">
-			No. Although the main targets for the research is Honda Automobiles. But we have leads to show the impact of this vulnerability also applies to other car manufacturers. We will release more details in the future.		  </p>
-		  </div>
-		  <br/>
-		  <div>
-		  <p class="ptitle"> 7: Is the risk real? <br/></p>
-          <p class="pfont">
-			We have successfully tested the latest models of Honda vehicles. And we strongly believe the vulnerability affects all Honda vehicles currently existing on the market. Please see the field test video down below.		  </p>
-		  <video width="640" height="320" controls>
-				<source src="video/Demo-Video-Field-Test.mp4" type="video/mp4">
-		  </video>
-		  </div>
-		  <br/>
-		  <div>
-		  <p class="ptitle"> 8: What makes this Bug unique or what's the Difference between CVE-2022-27254 and CVE-2019-20626? <br/></p>
-          <p class="pfont">
-			During the research, we noticed the other <a href="https://github.com/nonamecoder/CVE-2022-27254">researchers</a>  
-			have found similar vulnerabilities in Honda vehicles. Based on the description "The remote keyless system on Honda HR-V 2017 vehicles sends the same RF signal for each door-open request, which might allow a replay attack". 
-			What they found is a FIXED CODE vulnerability, meaning where an attacker can records the transmission in advance and replays it later to cause the car door to lock or unlock.
-			<br/>
-			<br/>
-			However, most modern vehicles includes Honda Automobiles implemented the proprietary rolling codes mechanism, which exactly prevents fixed code replay attack like CVE-2022-27254. 
-			The bug we discovered regard to the design flaw of rolling codes mechanism from Honda Motors. Which need to take very seriously.
-		  </p>
-		  </div>
-		  <br/>
-		  <div>
-		  <p class="ptitle"> 9: Is there more technical information about Rolling-PWN? <br/></p>
-          <p class="pfont">
-			You can follow the author on Twitter [@kevin2600]. However, we will not be releasing any tools required to go out and steal the affected vehicles. 
-			At a later stage, we will release technical information in order to encourage more researchers to get involved in the car security research.		  
-		  </p>
-		  </div>
-		  <br/>
-		  <div>
-		  <p class="ptitle"> 10: How to patch the modern automobile for Rolling-PWN bug like this?<br/></p>
-          <p class="pfont">
-		    The common solution requires us to bring the vehicle back to a local dealership as a recall. But the recommended mitigation strategy is to upgrade the vulnerable BCM firmware through Over-the-Air (OTA) Updates if feasible. However, some old vehicles may not support OTA.
-		  </p>
-		  </div>
-		  <br/>
-		  <div>
-		  <p class="ptitle"> 11: What does Honda think about this Rolling-PWN Bug? <br/></p>
-          <p class="pfont">
-			We have searched through the Honda official website, but we can not find any contact info for report Vulnerability. Seems Honda motor DOES NOT have a department to deal with security related issue for their products.
-			And a person who works at HONDA has told us "The best way to report the Honda vulnerability is to contact customer service". Therefore, we filed a report to Honda Customer service.			
-		  </p>
-		   <p class="pfont">
-			Honda spokesperson first denied the bug's existence "The keyfobs in the referenced vehicles are equipped with rolling code technology that would not allow the vulnerability as represented in the report".
-		  </p>
-		  <div class="footer-R0"></div>
+		  <div class="footer-B10"></div><p class="pfont">
+		  On 2022 May 15, a security researcher Sultan Qasim Khan from NCC group published a series of articles regarding his research. He has developed a tool for BLE relay attacks capable of relaying encrypted link layer communications. He has tested successfully on the Tesla Model 3 and other IOT products. However, he did not release the tool to the public. But he is kind enough to release another tool called Sniffle. Which is a sniffer for BLE 5 and 4 using TI CC1352/CC26x2 board. Moreover, he happened to use the same board to conduct the link layer BLE relay attack.
+		  <br/></p>
+		  <div class="footer-B11"></div>
 		  <p class="pfont">
-			But after Rob Stumpf from <a href="https://www.thedrive.com/tech/i-tried-the-honda-keyfob-hack-on-my-own-car-it-totally-worked">thedrive</a> confirmed and reproduced the bug. Honda has changed the tone by replied the Email "We acknowledge that with the method that you describe it is possible to mimic Remote Keyless commands and gain access to certain vehicles".
-		  </p>
+		  Around 2022 Oct, a group of researchers from Team XWZ claimed they reproduced Sultan's link layer relay attack, and successfully demonstrated it on Tesla Model 3. However, at the time of writing, they also failed to attack certain models of cars. One possibility is those vendors may implement an extra security mechanism to prevent the BLE relay attack like this.
+		  <br/></p>
 		  
-		  <p class="pfont">
-			However, in the end Honda concluded this is a low risk to the customers, and Honda regularly improves security features as new models are introduced that would thwart this and similar approaches. So lets fingers crossed.
 		  </p>
+		 </div>
 		 
-		  <div class="footer-R1"></div>
-		  </div>
+		 <div class="quarter noBorderOnLeft">
+          <h2 id="research-paper"  class="pPress">ONE MORE THING</h2>
+          <p class="pfont">
+			On 2019 August, security researcher Martin Herfurt published a project called Tesla Radar. He found that Tesla vehicles constantly broadcast a signal that anyone can detect. In addition, the owner cannot disable such unique hashed iBeacon IDs sent from Tesla vehicles. Anyone concerned about their privacy will likely think this an issue, since anyone can track any Tesla vehicles in this way.
+		  <br/>
+		  <div class="footer-B12"></div>
+		   <p class="pfont">
+			During the research we came across some vendors has a similar issue, and instead of broadcast a hashed ID, they were broadcast the vehicle VIN number in plaintext. Now some people may argue VIN number is a public information. This is true. However, because vendors chose to broadcast the VIN, does helped us to locate the target cars in the parking lots very quick. 		  <br/>
+			</p>
+		  <div class="footer-B13"></div>
 		  
-        </div>
+		  </p>
+		 </div>
+		 
+		 <div class="quarter noBorderOnLeft">
+          <h2 id="research-paper"  class="pPress">FINAL THOUGHT</h2>
+          <p class="pfont">
+		  Our findings have already been reported to the respective vendors. However, we experienced that sometimes due to the downstream dependencies on multiple vendors; it seems very difficult for some vendor to produce a patch. This clearly shows the complexity of resolving vehicle vulnerabilities, fingers crossed. 
+		 
+		  <br/><p class="pfont">
+		  On 2020 AUG, I presented my research NFC Relay attack on Tesla Model 3 at DEFCON. Just like for BLE Relay attack, response from Tesla are the same, that relay attacks are a known limitation of the passive entry system. Users should be encouraged to use the PIN to Drive feature. However, years ago we found a bug that can bypass the PIN2Drive. And this made us into the Tesla Hall of Fame. Year later researcher Martin Herfurt found another bug, which can bypass the PIN2Drive too. Therefore, all the vendors should fully aware that the security of the products is indeed a long-term game. 
+		  <br/></p>
+		  
+			<video width="570" height="320" controls="controls" class="pVideo">
+			  <source src="video/PIN2PASS.mp4" type="video/mp4">
+			</video>
+		  </p>
+		 </div>
 		
 		<div class="quarter noBorderOnLeft">
-		<h2 id="research-paper"  class="pPress">IN THE PRESS (SELECTION)</h2>	
+		<h2 id="research-paper"  class="pPress">REFERENCES</h2>	
+
 		<p class="plink">
-			·	Hackaday <a href="https://hackaday.com/2022/07/08/turns-out-you-can-just-unlock-any-honda-car/">"UNLOCK ANY (HONDA) CAR"</a><br/>
-			·	VICE <a href="https://www.vice.com/en/article/z34xnw/hackers-say-they-can-unlock-and-start-honda-cars-remotely">"Hackers Say They Can Unlock and Start Honda Cars Remotely"</a><br/>
-			·	Thedrive <a href="https://www.thedrive.com/tech/i-tried-the-honda-keyfob-hack-on-my-own-car-it-totally-worked">"I Tried the Honda Key Fob Hack on My Own Car. It Totally Worked"</a><br/>
-			·	Securityaffairs <a href="https://securityaffairs.co/wordpress/133090/hacking/honda-rolling-pwn-attack.html">"Experts demonstrate how to unlock several Honda models via Rolling-PWN attack"</a><br/>
-			·	NYPost <a href="https://nypost.com/2022/07/12/honda-key-fob-hack-could-leave-all-vehicle-models-since-2012-vulnerable-reports/">"Honda key fob hack could leave all vehicle models since 2012 vulnerable"</a><br/>
-			·	RTL-SDR <a href="https://www.rtl-sdr.com/rollingpwn-wireless-rolling-code-security-completely-defeated-on-all-honda-vehicles-since-2012/">"ROLLING-PWN: WIRELESS ROLLING CODE SECURITY COMPLETELY DEFEATED  <br/> &nbsp;&nbsp;ON ALL HONDA VEHICLES SINCE 2012"</a><br/>
-			·	Riscure <a href="https://www.riscure.com/blog/security-highlight-honda-rolling-pwn-attack">Security Highlight: Honda Rolling-PWN attack</a><br/>
+			·	<a href="https://hackaday.com/2022/07/08/turns-out-you-can-just-unlock-any-honda-car/">https://www.teslaradar.com/faq/</a><br/>
+			·	<a href="https://hackaday.com/2022/07/08/turns-out-you-can-just-unlock-any-honda-car/">https://github.com/nccgroup/Sniffle</a><br/>
+			·	<a href="https://hackaday.com/2022/07/08/turns-out-you-can-just-unlock-any-honda-car/">https://bugcrowd.com/QAX-StarV-Lab</a><br/>
+			·	<a href="https://hackaday.com/2022/07/08/turns-out-you-can-just-unlock-any-honda-car/">https://rollingpwn.github.io/rolling-pwn/</a><br/>
+			·	<a href="https://hackaday.com/2022/07/08/turns-out-you-can-just-unlock-any-honda-car/">https://securepositioning.com/ghost-peak/</a><br/>
+			·	<a href="https://hackaday.com/2022/07/08/turns-out-you-can-just-unlock-any-honda-car/">https://trifinite.org/stuff/tempa_relay_attack/</a><br/>
+			·	<a href="https://hackaday.com/2022/07/08/turns-out-you-can-just-unlock-any-honda-car/">https://www.youtube.com/watch?v=nn-_3AbtEkI (NFC Relay on Tesla)/</a><br/>
+			·<a href="https://hackaday.com/2022/07/08/turns-out-you-can-just-unlock-any-honda-car/">https://research.nccgroup.com/2022/05/15/technical-advisory-tesla-ble-phone-as-a-key-passive-entry-vulnerable-to-relay-attacks/</a><br/>
+	
 		</p>
 		</div>
 
       </section>
 	   <br/>
 	   <br/>
-      <div class="footer-logo"></div>
-	  
 
       <footer>
         <p class="text-muted">Rolling Pwn</p>
